@@ -388,6 +388,7 @@ def configure_providers():
     from providers.custom import CustomProvider
     from providers.dial import DIALModelProvider
     from providers.gemini import GeminiModelProvider
+    from providers.gemini_compatible import GeminiCompatibleProvider
     from providers.openai_provider import OpenAIModelProvider
     from providers.openrouter import OpenRouterProvider
     from providers.xai import XAIModelProvider
@@ -398,12 +399,19 @@ def configure_providers():
     has_openrouter = False
     has_custom = False
 
-    # Check for Gemini API key
+    # Check for Gemini API key and custom host
     gemini_key = os.getenv("GEMINI_API_KEY")
+    gemini_host = os.getenv("GEMINI_API_HOST")
+
     if gemini_key and gemini_key != "your_gemini_api_key_here":
-        valid_providers.append("Gemini")
-        has_native_apis = True
-        logger.info("Gemini API key found - Gemini models available")
+        if gemini_host:
+            valid_providers.append(f"Gemini Compatible API ({gemini_host})")
+            has_native_apis = True
+            logger.info(f"Gemini API key and custom host found - Gemini models available via custom host: {gemini_host}")
+        else:
+            valid_providers.append("Gemini")
+            has_native_apis = True
+            logger.info("Gemini API key found - Gemini models available")
 
     # Check for OpenAI API key
     openai_key = os.getenv("OPENAI_API_KEY")
@@ -466,7 +474,14 @@ def configure_providers():
     # 1. Native APIs first (most direct and efficient)
     if has_native_apis:
         if gemini_key and gemini_key != "your_gemini_api_key_here":
-            ModelProviderRegistry.register_provider(ProviderType.GOOGLE, GeminiModelProvider)
+            if gemini_host:
+                # Use GeminiCompatibleProvider for custom host
+                def gemini_compatible_factory(api_key=None):
+                    return GeminiCompatibleProvider(api_key=api_key or gemini_key, base_url=gemini_host)
+                ModelProviderRegistry.register_provider(ProviderType.GOOGLE, gemini_compatible_factory)
+            else:
+                # Use standard GeminiModelProvider
+                ModelProviderRegistry.register_provider(ProviderType.GOOGLE, GeminiModelProvider)
         if openai_key and openai_key != "your_openai_api_key_here":
             ModelProviderRegistry.register_provider(ProviderType.OPENAI, OpenAIModelProvider)
         if xai_key and xai_key != "your_xai_api_key_here":

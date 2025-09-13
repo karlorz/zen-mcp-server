@@ -237,6 +237,18 @@ DISABLED_TOOLS=
 
 </details>
 
+## Dependencies
+
+**Custom Google Genai SDK**
+
+This project uses a fork of the Google Genai Python SDK to support custom Gemini API endpoints:
+
+- **Fork**: [karlorz/python-genai](https://github.com/karlorz/python-genai)
+- **Purpose**: Enables custom Gemini-compatible endpoints via `GEMINI_API_HOST` environment variable
+- **Installation**: Automatically installed from GitHub when running `./run-server.sh`
+
+The fork adds support for custom base URLs in the Gemini client, allowing you to use self-hosted or alternative Gemini-compatible APIs.
+
 ## Key Features
 
 **AI Orchestration**
