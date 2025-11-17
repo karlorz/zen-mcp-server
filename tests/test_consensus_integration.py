@@ -41,6 +41,8 @@ async def test_consensus_multi_model_consultations(monkeypatch):
         "MISTRAL_API_KEY",
         "CUSTOM_API_KEY",
         "CUSTOM_API_URL",
+        "GOOGLE_GEMINI_BASE_URL",
+        "GEMINI_API_HOST",
     ]
 
     recording_mode = not CONSENSUS_CASSETTE_PATH.exists() or not GEMINI_REPLAY_PATH.exists()
@@ -185,6 +187,8 @@ async def test_consensus_auto_mode_with_openrouter_and_gemini(monkeypatch):
             "DIAL_API_KEY",
             "CUSTOM_API_KEY",
             "CUSTOM_API_URL",
+            "GOOGLE_GEMINI_BASE_URL",
+            "GEMINI_API_HOST",
         ]:
             m.delenv(key, raising=False)
 

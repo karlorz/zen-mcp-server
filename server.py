@@ -408,14 +408,24 @@ def configure_providers():
     has_openrouter = False
     has_custom = False
 
-    # Check for Gemini API key and optional custom host
+    # Check for Gemini API key and optional custom base URL
     gemini_key = get_env("GEMINI_API_KEY")
-    gemini_host = get_env("GEMINI_API_HOST")
+    gemini_base_url = get_env("GOOGLE_GEMINI_BASE_URL")
+    if not gemini_base_url:
+        legacy_host = get_env("GEMINI_API_HOST") or get_env("GEMINI_BASE_URL")
+        if legacy_host:
+            logger.warning(
+                "Detected legacy GEMINI_API_HOST/GEMINI_BASE_URL environment variable. "
+                "Please migrate to GOOGLE_GEMINI_BASE_URL."
+            )
     if gemini_key and gemini_key != "your_gemini_api_key_here":
-        if gemini_host:
-            valid_providers.append(f"Gemini Compatible API ({gemini_host})")
+        if gemini_base_url:
+            valid_providers.append(f"Gemini Compatible API ({gemini_base_url})")
             has_native_apis = True
-            logger.info(f"Gemini API key and custom host found - Gemini models available via custom host: {gemini_host}")
+            logger.info(
+                "Gemini API key and custom base URL found - Gemini models available via custom endpoint: %s",
+                gemini_base_url,
+            )
         else:
             valid_providers.append("Gemini")
             has_native_apis = True
@@ -505,10 +515,10 @@ def configure_providers():
 
     if has_native_apis:
         if gemini_key and gemini_key != "your_gemini_api_key_here":
-            if gemini_host:
-                # Use GeminiCompatibleProvider for custom host
+            if gemini_base_url:
+                # Use GeminiCompatibleProvider for custom endpoint
                 def gemini_compatible_factory(api_key=None):
-                    return GeminiCompatibleProvider(api_key=api_key or gemini_key, base_url=gemini_host)
+                    return GeminiCompatibleProvider(api_key=api_key or gemini_key, base_url=gemini_base_url)
 
                 ModelProviderRegistry.register_provider(ProviderType.GOOGLE, gemini_compatible_factory)
             else:

@@ -17,7 +17,7 @@ class GeminiCompatibleProvider(GeminiModelProvider):
     Gemini API endpoints while maintaining all the same functionality and model
     configurations from the base Gemini provider.
 
-    Activated when GEMINI_API_HOST environment variable is set.
+    Activated when GOOGLE_GEMINI_BASE_URL environment variable is set.
     """
 
     FRIENDLY_NAME = "Gemini Compatible API"
@@ -32,7 +32,7 @@ class GeminiCompatibleProvider(GeminiModelProvider):
             api_key: API key for the custom Gemini endpoint. Falls back to
                     GEMINI_API_KEY environment variable if not provided.
             base_url: Base URL for the custom Gemini API endpoint. Falls back to
-                     GEMINI_API_HOST environment variable if not provided.
+                     GOOGLE_GEMINI_BASE_URL environment variable if not provided.
             **kwargs: Additional configuration passed to parent Gemini provider
 
         Raises:
@@ -40,13 +40,14 @@ class GeminiCompatibleProvider(GeminiModelProvider):
         """
         # Fall back to environment variables only if not provided
         if not base_url:
-            base_url = os.getenv("GEMINI_API_HOST", "")
+            base_url = os.getenv("GOOGLE_GEMINI_BASE_URL", "")
         if not api_key:
             api_key = os.getenv("GEMINI_API_KEY", "")
 
         if not base_url:
             raise ValueError(
-                "Gemini API host URL must be provided via base_url parameter or GEMINI_API_HOST environment variable"
+                "Gemini API host URL must be provided via base_url parameter or GOOGLE_GEMINI_BASE_URL environment "
+                "variable"
             )
 
         if not api_key:

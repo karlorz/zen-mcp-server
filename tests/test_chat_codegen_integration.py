@@ -57,7 +57,14 @@ async def test_chat_codegen_saves_file(monkeypatch, tmp_path):
         m.setenv("GOOGLE_GENAI_REPLAY_ID", CASSETTE_REPLAY_ID)
 
         # Clear other provider keys to avoid unintended routing
-        for key in ["OPENAI_API_KEY", "XAI_API_KEY", "OPENROUTER_API_KEY", "CUSTOM_API_KEY"]:
+        for key in [
+            "OPENAI_API_KEY",
+            "XAI_API_KEY",
+            "OPENROUTER_API_KEY",
+            "CUSTOM_API_KEY",
+            "GOOGLE_GEMINI_BASE_URL",
+            "GEMINI_API_HOST",
+        ]:
             m.delenv(key, raising=False)
 
         ModelProviderRegistry.reset_for_testing()

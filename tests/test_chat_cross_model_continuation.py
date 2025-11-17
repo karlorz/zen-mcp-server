@@ -70,6 +70,8 @@ async def test_chat_cross_model_continuation(monkeypatch, tmp_path):
         "MISTRAL_API_KEY",
         "CUSTOM_API_KEY",
         "CUSTOM_API_URL",
+        "GOOGLE_GEMINI_BASE_URL",
+        "GEMINI_API_HOST",
     ]
 
     recording_mode = not OPENAI_CASSETTE_PATH.exists() or not GEMINI_REPLAY_PATH.exists()
